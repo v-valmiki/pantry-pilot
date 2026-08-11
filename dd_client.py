@@ -85,7 +85,25 @@ def checkout(cart: dict):
     # reasonable guess at the shape, but run `dd-cli --help` yourself once
     # you have real access and correct these before flipping DRY_RUN off.
     for item in cart["items"]:
-        subprocess.run(["dd-cli", "cart", "add", item["name"]], check=True)
+        add_result = subprocess.run(
+            ["dd-cli", "cart", "add", item["name"]], capture_output=True, text=True
+        )
+        if add_result.returncode != 0:
+            _log(
+                "checkout",
+                f"failed adding {item['name']!r} to cart",
+                add_result.stderr.strip(),
+            )
+            return {
+                "status": "failed",
+                "reason": f"could not add {item['name']!r} to cart",
+                "raw_output": add_result.stderr,
+            }
+
     proc = subprocess.run(["dd-cli", "checkout"], capture_output=True, text=True)
+    if proc.returncode != 0:
+        _log("checkout", f"{len(cart['items'])} item(s), ${cart['estimated_total']}", f"FAILED: {proc.stderr.strip()}")
+        return {"status": "failed", "reason": "checkout command failed", "raw_output": proc.stderr}
+
     _log("checkout", f"{len(cart['items'])} item(s), ${cart['estimated_total']}", proc.stdout.strip())
     return {"status": "live", "raw_output": proc.stdout}

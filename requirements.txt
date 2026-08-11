@@ -1,0 +1,6 @@
+# No external dependencies. pantrypilot.py and dd_client.py use only the
+# Python standard library (json, os, subprocess, time, uuid, pathlib).
+# Requires Python 3.8+.
+#
+# This file exists so that's explicit rather than assumed, not because
+# there's anything to install.

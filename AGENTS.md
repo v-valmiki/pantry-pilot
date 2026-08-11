@@ -39,3 +39,4 @@ not the fridge alone. Once built, that context should feed into the same
 decision process as `preferences.json`: knowing what's already on hand should
 shift you toward suggesting a restock of specific missing items, or toward
 using what's already there instead of ordering, rather than ordering blind.
+

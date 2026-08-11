@@ -1,0 +1,12 @@
+__pycache__/
+*.pyc
+
+# Your actual order history. Keep this out of the repo so the public
+# version doesn't carry your personal order data, and so a fresh clone
+# starts with a clean log.
+order_log.jsonl
+
+# preferences.json is intentionally NOT ignored: the committed version
+# is a template with empty fields. If you fill in real dietary details
+# and don't want them public, stop tracking it locally instead:
+#   git rm --cached preferences.json && echo "preferences.json" >> .gitignore

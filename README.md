@@ -31,46 +31,49 @@ Confirm this order? (yes/no): yes
 Ordered. {'order_id': 'DRYRUN-a1b2c3d4', 'status': 'simulated', 'total': 27.25}
 ```
 
-## Going live: on-demand Scaleway Mac, not always-on
-dd-cli requires macOS on Apple Silicon. Rather than keeping a Mac running
-24/7, the plan is to rent a Scaleway Mac mini (Apple Silicon, billed hourly
-with a 24-hour minimum lease) and spin it up only when you actually want to
-use Pantrypilot, then shut it down after.
+## Going live: owned Mac mini, not a cloud rental
+dd-cli requires macOS on Apple Silicon. Cloud Apple Silicon rentals (Scaleway
+and similar) turned out not to fit an on-demand use pattern: due to Apple's
+own licensing terms, there's no pause/stop state, you're billed continuously
+for as long as the machine is assigned to your account, there's a mandatory
+24-hour minimum before you're even allowed to delete it, and deleting means
+a full reinstall next time, not a resume. That's the opposite of "turn it on
+when I need it."
 
-Rough workflow once you have dd-cli waitlist access:
+An owned Mac mini (new or used) fits much better: put it to sleep when idle,
+wake it instantly, no per-hour cost while it's off, and everything, dd-cli
+login, Codex config, stays exactly as you left it.
 
-1. **Boot the instance** from the Scaleway console (or CLI) when you want
-   Pantrypilot available. Takes a few minutes to come up.
-2. **SSH or VNC in**, run `dd-cli login` once per instance if it's a fresh
-   boot (check whether Scaleway preserves state between stops, or if login
-   needs repeating, confirm this once you're actually renting).
-3. **Set the environment variable and run:**
+Rough workflow once you have dd-cli waitlist access and a Mac:
+
+1. **Run `dd-cli login` once.** This only needs to happen again if you wipe
+   the machine.
+2. **Set the environment variable and run:**
    ```bash
    export DRY_RUN=false
    python3 pantrypilot.py
    ```
-4. **Pair Codex mobile** (see below) so you can chat with it from your
-   phone while the instance is up.
-5. **Shut the instance down** from the Scaleway console when you're done
-   for the day. Billing stops accruing (beyond the 24-hour minimum on
-   whichever lease you're in).
+3. **Pair Codex mobile** (see below) so you can chat with it from your
+   phone while the Mac is awake.
+4. **Let the Mac sleep** when you're not using it. Wake it (locally, or via
+   Wake on Demand on the same network) when you want Pantrypilot available
+   again, no reinstall, no re-pairing needed.
 
 **Before your first live order**, run `dd-cli --help` on the actual
-instance and check the cart-add and checkout commands in `dd_client.py`.
+machine and check the cart-add and checkout commands in `dd_client.py`.
 The `search` command is confirmed correct against dd-cli's public README
 (`dd-cli search --query "..."`), but cart and checkout syntax aren't
 publicly documented, they're a reasonable guess, not a verified match.
 Fix those two calls against the real `--help` output before relying on them.
 
-## Codex mobile pairing (once live on the Scaleway instance)
-1. Open the Codex Mac app on the running instance, select "Codex mobile,"
-   and scan the QR code from the ChatGPT mobile app.
+## Codex mobile pairing (once live on your Mac)
+1. Open the Codex Mac app, select "Codex mobile," and scan the QR code
+   from the ChatGPT mobile app.
 2. Message the session from your phone the same way you'd type into this
    shell. Codex reads `AGENTS.md` for the same rules this script hardcodes.
-3. Pairing is tied to that specific running session, expect to re-pair
-   after you shut the instance down and boot a new one, unless Scaleway
-   preserves instance state across stops (worth confirming once you're
-   actually testing this).
+3. Because the Mac itself persists (it's not deleted and recreated), this
+   pairing should survive sleep/wake cycles. Re-pair only if you reinstall
+   macOS or reset the Codex app.
 
 ## Vision extension (planned, not built)
 Intention: low-cost cameras on the fridge, the pantry, and general food

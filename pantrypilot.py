@@ -10,7 +10,6 @@ Run: python3 pantrypilot.py
 """
 
 import json
-import sys
 from pathlib import Path
 
 import dd_client
@@ -53,7 +52,10 @@ def print_cart(cart: dict):
 
 
 def main():
-    prefs = load_preferences()
+    # NOTE: load_preferences() exists for a real Codex session reading
+    # AGENTS.md to use. This demo shell's heuristic classify() doesn't
+    # consult it yet, that's the gap between this stand-in and the eventual
+    # Codex-driven version.
     print("Pantrypilot shell (DRY_RUN =", dd_client.DRY_RUN, ")")
     print("Tell me how you're feeling or what you need. Type 'quit' to exit.\n")
 
